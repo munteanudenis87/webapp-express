@@ -1,0 +1,17 @@
+{
+  "name": "setup-web-app-express",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "DM",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "watch": "node --env-file=.env --watch app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3"
+  }
+}
