@@ -1,6 +1,11 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT
+// import cors middleware
+const cors = require("cors");
+
+// abilitiamo dominio FE
+app.use(cors({origin: process.env.FE_APP}));
 
 const movieRouter = require('./routers/movieRouter');
 
@@ -9,6 +14,11 @@ const errorsHandler = require('./middlewares/errorsHandler');
 
 // importo middleware di gestione errore di chiamata su rotta inesistente 404
 const notFound = require('./middlewares/notFound');
+
+// importo middleware per path images
+const imagePath = require('./middlewares/imagePath');
+
+app.use(imagePath);
 
 app.use(express.static('public'));
 
