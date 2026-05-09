@@ -51,18 +51,21 @@ function show (req, res) {
 });
 };
 function store (req, res) {
-    const { title, director, genre, release_year, abstract, image } = req.body;
+    const { title, director, genre, release_year, abstract } = req.body;
+
+    const imageName = `${req.file.filename}`;
     // prepariamo la query
-    const sql = 'INSERT INTO movies (title, director, genre, release_year, abstract, image, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ? )'
+    const sql = "INSERT INTO movies (title, director, genre, release_year, abstract, image) VALUES (?, ?, ?, ?, ?, ?)";
     // eseguiamo la query
     connection.query(
         sql,
-        [title, director, genre, release_year, abstract, image],
+        [title, director, genre, release_year, abstract, imageName],
         (err, results) => {
-            if (err) return res.status(500).json({ error: 'Failed to insert post' });
-                res.status(201); // status corretto
-                console.log(results)
-                res.json({ id: results.insertId }); // restituiamo l'id assegnato dal DB
+            if (err) {
+                console.log(err)
+                return (new Error("Errore interno del server"));
+            }
+            res.status(201).json({ id: results.insertId }); // restituiamo l'id assegnato dal DB
         });
 };
 

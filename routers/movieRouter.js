@@ -6,6 +6,8 @@ const router = express.Router();
 // importo il controller della risorsa movie
 const movieController = require('../controllers/movieController');
 
+const upload = require('../middlewares/multer');
+
 // definisco le varie rotte relative alla risorsa specifica
 // index
 router.get('/', movieController.index);
@@ -17,7 +19,7 @@ router.get('/:id', movieController.show);
 router.post('/:id/reviews', movieController.storeReview);
 
 // store movie
-router.post('/', movieController.store);
+router.post('/', upload.single('image'), movieController.store);
 
 // update
 router.put('/:id', movieController.update);
