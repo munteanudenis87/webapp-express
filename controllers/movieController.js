@@ -51,13 +51,13 @@ function show (req, res) {
 });
 };
 function store (req, res) {
-    const { title, director, genre, release_year, abstract, image, created_at, updated_at } = req.body;
+    const { title, director, genre, release_year, abstract, image } = req.body;
     // prepariamo la query
-    const sql = 'INSERT INTO movies (title, director, genre, release_year, abstract, image, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    const sql = 'INSERT INTO movies (title, director, genre, release_year, abstract, image, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ? )'
     // eseguiamo la query
     connection.query(
         sql,
-        [title, director, genre, release_year, abstract, image, created_at, updated_at],
+        [title, director, genre, release_year, abstract, image],
         (err, results) => {
             if (err) return res.status(500).json({ error: 'Failed to insert post' });
                 res.status(201); // status corretto
@@ -65,15 +65,36 @@ function store (req, res) {
                 res.json({ id: results.insertId }); // restituiamo l'id assegnato dal DB
         });
 };
+
+// inserimento di review specifica legata ad un movie
+function storeReview(req, res) {
+    // recuperiamo l'id dall' URL
+    const id = req.params.id;
+
+    // recuperiamo inf nel body
+    const { text, name, vote } = req.body;
+
+    // prepariamo la query
+    const sql = 'INSERT INTO reviews (text , name, vote, movie_id) VALUES (?,?,?,?)';
+
+    // chiamata per esecuzione query aggiunta review
+    connection.query(sql, [text, name, vote, id], (err, reviewResult) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+        // restituiamo codice rest corretto
+        res.status(201);
+        res.json({ message: 'Review succesfully added', id: reviewResult.insertId })
+    })
+}
+
 function update (req, res) {
     // recuperiamo l'id dall' URL
     const { id } = req.params;
     // recuperiamo i dati dal body della richiesta
-    const { title, director, genre, release_year, abstract, image, created_at, updated_at } = req.body;
+    const { title, director, genre, release_year, abstract, image } = req.body;
     // Prepariamo la query per aggiornare il movie
     connection.query(
-        'UPDATE movies SET title = ?,  director = ?, genre = ?, release_year = ?, abstract = ?, image = ?, created_at = ?, updated_at = ? WHERE id = ?',
-        [title, director, genre, release_year, abstract, image, created_at, updated_at, id],
+        'UPDATE movies SET title = ?,  director = ?, genre = ?, release_year = ?, abstract = ?, image = ? WHERE id = ?',
+        [title, director, genre, release_year, abstract, image, id],
         (err) => {
             if (err) return res.status(500).json({ error: 'Failed to update movie' });
                 res.json({ message: 'Movie updated successfully' });
@@ -90,4 +111,4 @@ function destroy (req, res) {
 };
 
 // esportiamo le funzioni per il router
-module.exports = { index, show, store, update, destroy };
+module.exports = { index, show, store, storeReview, update, destroy };
